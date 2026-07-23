@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YouTube Captions Extractor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;650;700;750;760;800;850&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/app.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <!-- ── Header ──────────────────────────────────── -->
+      <header class="site-header">
+        <nav class="topbar" aria-label="Application">
+          <a class="brand" href="/" aria-label="Home">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><rect x="2" y="4" width="20" height="16" rx="3" /><polygon points="10,8.5 16,12 10,15.5" fill="currentColor" stroke="none" /></svg>
+            </span>
+            <span class="brand-name">YouTube Captions <em>Extractor</em></span>
+            <span class="brand-sub">Subtitle &amp; transcript tool</span>
+          </a>
+          <div class="header-right">
+            <span class="header-status">
+              <span class="status-pulse" aria-hidden="true"></span>
+              <span class="status-label">Runs locally</span>
+            </span>
+            <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+              <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+              <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      <!-- ── Hero ────────────────────────────────────── -->
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-orb hero-orb-1" aria-hidden="true"></div>
+        <div class="hero-orb hero-orb-2" aria-hidden="true"></div>
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <span class="eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 19 6v5.4c0 4.3-2.9 7.6-7 9.1-4.1-1.5-7-4.8-7-9.1V6z"/></svg>
+              Private video transcription
+            </span>
+            <h1 id="page-title">Extract captions from<br />any YouTube video.</h1>
+            <p>Paste a URL or video ID. Captions are fetched directly from YouTube's public subtitle tracks &mdash; no uploads, no accounts, no tracking.</p>
+            <a href="#workspace" class="hero-link">
+              Get started
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+            </a>
+          </div>
+          <div class="hero-proof" aria-label="Key features">
+            <ul class="hero-proof-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>Manual &amp; auto-generated captions</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>SRT, WebVTT, JSON &amp; plain text</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>Multi-language &amp; translation</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>Search, copy &amp; download</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Main ────────────────────────────────────── -->
+      <main>
+        <section class="workspace-card" id="workspace" aria-labelledby="workspace-title">
+          <div class="workspace-heading">
+            <p class="section-kicker">Add content</p>
+            <h2 id="workspace-title">Extract captions</h2>
+            <p>Paste a YouTube URL or video ID and choose your output format.</p>
+          </div>
+
+          <div class="input-row">
+            <input type="text" class="url-input" id="urlInput" placeholder="https://www.youtube.com/watch?v=... or video ID" aria-label="YouTube URL or video ID" autofocus />
+            <button class="primary-button" id="extractBtn" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              Extract
+            </button>
+          </div>
+
+          <div class="language-chips" id="languageChips" role="radiogroup" aria-label="Available languages"></div>
+
+          <div class="options-row">
+            <div class="option-group">
+              <label for="formatSelect">Format</label>
+              <select id="formatSelect">
+                <option value="text">Plain Text</option>
+                <option value="srt">SRT</option>
+                <option value="vtt">WebVTT</option>
+                <option value="json">JSON</option>
+              </select>
+            </div>
+            <div class="option-group">
+              <label for="translateSelect">Translate to</label>
+              <select id="translateSelect">
+                <option value="">None</option>
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="pt">Portuguese</option>
+                <option value="ja">Japanese</option>
+                <option value="ko">Korean</option>
+                <option value="zh">Chinese</option>
+                <option value="hi">Hindi</option>
+                <option value="ar">Arabic</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="status-bar" id="statusBar" role="status" aria-live="polite">
+            <span class="spinner" id="statusSpinner" style="display:none"></span>
+            <svg id="statusIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><path d="M12 8v4M12 16h.01" /></svg>
+            <span id="statusText"></span>
+          </div>
+
+          <div class="privacy-row">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.5 19 6v5.4c0 4.3-2.9 7.6-7 9.1-4.1-1.5-7-4.8-7-9.1V6z" /><path d="m9 12 2 2 4-4" /></svg>
+            <span><strong>Private by design.</strong> Nothing is uploaded &mdash; captions are fetched from YouTube's public API.</span>
+          </div>
+
+          <div class="shortcut-hint">
+            <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to extract &nbsp;&middot;&nbsp;
+            <kbd>Ctrl</kbd>+<kbd>C</kbd> to copy output
+          </div>
+        </section>
+
+        <!-- Results -->
+        <section class="results-section" id="resultsSection" hidden aria-labelledby="results-title">
+          <div class="results-heading">
+            <div>
+              <p class="section-kicker">Editable output</p>
+              <h2 id="results-title">Transcript</h2>
+            </div>
+            <div class="heading-actions">
+              <button class="secondary-button" id="copyBtn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                Copy
+              </button>
+              <button class="primary-button" id="downloadBtn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+                Download
+              </button>
+            </div>
+          </div>
+
+          <div class="stats-bar" id="statsBar">
+            <span class="stat-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+              <strong id="statWords">0</strong> words
+            </span>
+            <span class="stat-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <strong id="statDuration">0:00</strong> duration
+            </span>
+            <span class="stat-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <strong id="statSegments">0</strong> segments
+            </span>
+          </div>
+
+          <div class="meta-row" id="metaRow">
+            <span class="meta-badge lang" id="metaLang"></span>
+            <span class="meta-badge" id="metaType"></span>
+          </div>
+
+          <div class="search-bar" id="searchBar">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search within transcript..." aria-label="Search transcript" />
+            <span class="search-count" id="searchCount"></span>
+            <div class="search-nav">
+              <button class="icon-button" id="searchPrev" type="button" aria-label="Previous match">&uarr;</button>
+              <button class="icon-button" id="searchNext" type="button" aria-label="Next match">&darr;</button>
+            </div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-toolbar">
+              <strong id="toolbarTitle">Output</strong>
+              <div class="result-actions">
+                <button class="icon-button" id="copyBtnSmall" type="button" aria-label="Copy to clipboard">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                </button>
+                <button class="icon-button" id="downloadBtnSmall" type="button" aria-label="Download file">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+                </button>
+              </div>
+            </div>
+            <pre class="json-highlight" id="jsonOutput" hidden aria-label="Highlighted JSON output"></pre>
+            <textarea class="output-textarea" id="outputArea" readonly aria-label="Extracted transcript"></textarea>
+          </div>
+        </section>
+
+        <!-- History -->
+        <section class="history-panel" id="historyPanel" aria-labelledby="history-title">
+          <div class="history-header">
+            <h3 id="history-title">Recent extractions</h3>
+            <button class="icon-button" id="clearHistoryBtn" type="button" aria-label="Clear history">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            </button>
+          </div>
+          <div class="history-list" id="historyList">
+            <div class="history-empty">No extractions yet. Paste a URL above to get started.</div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>No uploads. No tracking. Captions are fetched from YouTube's public subtitle data. <strong>YouTube Captions Extractor</strong></p>
+      </footer>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+    (function() {
+      "use strict";
+
+      /* ── DOM refs ─────────────────────────────────── */
+      const $ = (s) => document.querySelector(s);
+      const urlInput = $("#urlInput");
+      const extractBtn = $("#extractBtn");
+      const formatSelect = $("#formatSelect");
+      const translateSelect = $("#translateSelect");
+      const languageChips = $("#languageChips");
+      const statusBar = $("#statusBar");
+      const statusText = $("#statusText");
+      const statusSpinner = $("#statusSpinner");
+      const statusIcon = $("#statusIcon");
+      const resultsSection = $("#resultsSection");
+      const outputArea = $("#outputArea");
+      const jsonOutput = $("#jsonOutput");
+      const metaLang = $("#metaLang");
+      const metaType = $("#metaType");
+      const toolbarTitle = $("#toolbarTitle");
+      const statsBar = $("#statsBar");
+      const statWords = $("#statWords");
+      const statDuration = $("#statDuration");
+      const statSegments = $("#statSegments");
+      const searchBar = $("#searchBar");
+      const searchInput = $("#searchInput");
+      const searchCount = $("#searchCount");
+      const historyList = $("#historyList");
+      const toast = $("#toast");
+      const themeToggle = $("#themeToggle");
+
+      let currentData = null;
+      let currentTranscriptText = "";
+      let selectedLang = "";
+      let searchMatches = [];
+      let searchIdx = 0;
+
+      /* ── Theme ────────────────────────────────────── */
+      function getTheme() { return localStorage.getItem("yt-caps-theme") || "light"; }
+      function setTheme(t) {
+        document.documentElement.setAttribute("data-theme", t);
+        localStorage.setItem("yt-caps-theme", t);
+        const sun = themeToggle.querySelector(".icon-sun");
+        const moon = themeToggle.querySelector(".icon-moon");
+        if (t === "dark") { sun.style.display = "none"; moon.style.display = "block"; }
+        else { sun.style.display = "block"; moon.style.display = "none"; }
+      }
+      setTheme(getTheme());
+      themeToggle.addEventListener("click", () => setTheme(getTheme() === "light" ? "dark" : "light"));
+
+      /* ── History ──────────────────────────────────── */
+      function getHistory() { try { return JSON.parse(localStorage.getItem("yt-caps-history") || "[]"); } catch { return []; } }
+      function saveHistory(h) { localStorage.setItem("yt-caps-history", JSON.stringify(h)); }
+      function addHistory(videoId, lang, format) {
+        let h = getHistory().filter(i => i.videoId !== videoId);
+        h.unshift({ videoId, lang, format, ts: Date.now() });
+        if (h.length > 20) h = h.slice(0, 20);
+        saveHistory(h);
+        renderHistory();
+      }
+      function renderHistory() {
+        const h = getHistory();
+        if (!h.length) { historyList.innerHTML = '<div class="history-empty">No extractions yet. Paste a URL above to get started.</div>'; return; }
+        historyList.innerHTML = h.map(i => `
+          <div class="history-item" data-vid="${i.videoId}" data-lang="${i.lang || ""}" data-format="${i.format || "text"}" role="button" tabindex="0">
+            <span class="hi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><polygon points="10,8.5 16,12 10,15.5" fill="currentColor" stroke="none"/></svg></span>
+            <span class="hi-info">
+              <span class="hi-id">${i.videoId}</span>
+              <span class="hi-meta">${i.lang || "auto"} &middot; ${i.format || "text"} &middot; ${timeAgo(i.ts)}</span>
+            </span>
+            <button class="icon-button hi-delete" data-delete="${i.videoId}" aria-label="Remove from history">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>`).join("");
+      }
+      function timeAgo(ts) {
+        const d = Date.now() - ts;
+        if (d < 60000) return "just now";
+        if (d < 3600000) return Math.floor(d / 60000) + "m ago";
+        if (d < 86400000) return Math.floor(d / 3600000) + "h ago";
+        return Math.floor(d / 86400000) + "d ago";
+      }
+      historyList.addEventListener("click", (e) => {
+        const del = e.target.closest("[data-delete]");
+        if (del) {
+          e.stopPropagation();
+          const vid = del.getAttribute("data-delete");
+          saveHistory(getHistory().filter(i => i.videoId !== vid));
+          renderHistory();
+          return;
+        }
+        const item = e.target.closest(".history-item");
+        if (item) {
+          urlInput.value = item.dataset.vid;
+          if (item.dataset.lang) { selectedLang = item.dataset.lang; }
+          if (item.dataset.format) { formatSelect.value = item.dataset.format; }
+          extract();
+        }
+      });
+      historyList.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          const item = e.target.closest(".history-item");
+          if (item) { e.preventDefault(); item.click(); }
+        }
+      });
+      $("#clearHistoryBtn").addEventListener("click", () => { saveHistory([]); renderHistory(); });
+      renderHistory();
+
+      /* ── URL params (deep link) ───────────────────── */
+      const params = new URLSearchParams(window.location.search);
+      const deepV = params.get("v");
+      const deepF = params.get("format");
+      if (deepV) { urlInput.value = deepV; if (deepF) formatSelect.value = deepF; extract(); }
+
+      /* ── Language chips ───────────────────────────── */
+      let availableLanguages = [];
+      async function loadLanguages(url) {
+        if (!url) return;
+        try {
+          const resp = await fetch("/api/list-languages?url=" + encodeURIComponent(url));
+          if (!resp.ok) return;
+          availableLanguages = await resp.json();
+          renderChips();
+        } catch { }
+      }
+      function renderChips() {
+        if (!availableLanguages.length) { languageChips.innerHTML = ""; return; }
+        languageChips.innerHTML = availableLanguages.map(l => {
+          const active = selectedLang === l.language_code ? " active" : "";
+          const kind = l.is_generated ? "auto" : "manual";
+          return `<button class="lang-chip${active}" data-lang="${l.language_code}" role="radio" aria-checked="${active ? "true" : "false"}">${l.language} <span class="chip-kind">${kind}</span></button>`;
+        }).join("");
+      }
+      languageChips.addEventListener("click", (e) => {
+        const chip = e.target.closest(".lang-chip");
+        if (!chip) return;
+        selectedLang = chip.dataset.lang;
+        renderChips();
+        if (currentData) extract();
+      });
+      let loadLangTimer;
+      urlInput.addEventListener("input", () => {
+        clearTimeout(loadLangTimer);
+        loadLangTimer = setTimeout(() => loadLanguages(urlInput.value.trim()), 600);
+      });
+
+      /* ── Status ───────────────────────────────────── */
+      function showStatus(msg, type) {
+        statusText.textContent = msg;
+        statusBar.className = "status-bar visible " + type;
+        if (type === "loading") { statusSpinner.style.display = "inline-block"; statusIcon.style.display = "none"; }
+        else { statusSpinner.style.display = "none"; statusIcon.style.display = "inline"; }
+      }
+      function hideStatus() { statusBar.className = "status-bar"; }
+      function showToast(msg) { toast.textContent = msg; toast.classList.add("visible"); setTimeout(() => toast.classList.remove("visible"), 2200); }
+
+      /* ── Format duration ──────────────────────────── */
+      function fmtDuration(s) {
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        const sec = Math.floor(s % 60);
+        if (h > 0) return `${h}:${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
+        return `${m}:${String(sec).padStart(2,"0")}`;
+      }
+
+      /* ── JSON syntax highlight ────────────────────── */
+      function highlightJSON(str) {
+        return str.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g, (match) => {
+          let cls = "json-number";
+          if (/^"/.test(match)) { cls = /:$/.test(match) ? "json-key" : "json-string"; }
+          else if (/true|false/.test(match)) { cls = "json-bool"; }
+          else if (/null/.test(match)) { cls = "json-null"; }
+          return `<span class="${cls}">${match}</span>`;
+        });
+      }
+
+      /* ── Search ───────────────────────────────────── */
+      function doSearch() {
+        const q = searchInput.value.trim().toLowerCase();
+        outputArea.innerHTML = "";
+        jsonOutput.innerHTML = "";
+        searchMatches = [];
+        searchIdx = 0;
+
+        if (!q || !currentTranscriptText) {
+          searchCount.textContent = "";
+          if (currentData && currentData.format === "json") {
+            jsonOutput.innerHTML = highlightJSON(currentTranscriptText);
+            jsonOutput.hidden = false;
+            outputArea.hidden = true;
+          } else {
+            outputArea.value = currentTranscriptText;
+            outputArea.hidden = false;
+            jsonOutput.hidden = true;
+          }
+          return;
+        }
+
+        if (currentData && currentData.format === "json") {
+          const plain = currentTranscriptText;
+          const regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
+          const highlighted = highlightJSON(plain).replace(regex, '<span class="search-match">$1</span>');
+          jsonOutput.innerHTML = highlighted;
+          jsonOutput.hidden = false;
+          outputArea.hidden = true;
+          searchMatches = jsonOutput.querySelectorAll(".search-match");
+        } else {
+          const lines = currentTranscriptText.split("\n");
+          const regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
+          const highlighted = lines.map(line => line.replace(regex, '<span class="search-match">$1</span>')).join("\n");
+          jsonOutput.innerHTML = highlighted;
+          jsonOutput.hidden = false;
+          outputArea.hidden = true;
+          searchMatches = jsonOutput.querySelectorAll(".search-match");
+        }
+
+        searchCount.textContent = searchMatches.length ? `${searchMatches.length} found` : "No matches";
+        if (searchMatches.length) highlightSearchMatch(0);
+      }
+      function highlightSearchMatch(idx) {
+        searchMatches.forEach((m, i) => m.classList.toggle("active", i === idx));
+        if (searchMatches[idx]) searchMatches[idx].scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      searchInput.addEventListener("input", doSearch);
+      $("#searchPrev").addEventListener("click", () => { if (!searchMatches.length) return; searchIdx = (searchIdx - 1 + searchMatches.length) % searchMatches.length; highlightSearchMatch(searchIdx); });
+      $("#searchNext").addEventListener("click", () => { if (!searchMatches.length) return; searchIdx = (searchIdx + 1) % searchMatches.length; highlightSearchMatch(searchIdx); });
+
+      /* ── Extract ──────────────────────────────────── */
+      async function extract() {
+        const url = urlInput.value.trim();
+        if (!url) { showStatus("Please enter a YouTube URL or video ID.", "error"); return; }
+
+        extractBtn.disabled = true;
+        showStatus("Extracting captions\u2026", "loading");
+        resultsSection.hidden = true;
+
+        const format = formatSelect.value;
+        const translateTo = translateSelect.value || undefined;
+        const language = selectedLang || undefined;
+
+        try {
+          const resp = await fetch("/api/extract", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url, format, language, translate_to: translateTo }),
+          });
+          const data = await resp.json();
+          if (!resp.ok) throw new Error(data.detail || "Failed to extract captions");
+
+          currentData = data;
+          currentTranscriptText = data.content;
+
+          /* Stats */
+          if (data.stats) {
+            statWords.textContent = data.stats.word_count.toLocaleString();
+            statDuration.textContent = fmtDuration(data.stats.duration_seconds);
+            statSegments.textContent = data.stats.snippet_count.toLocaleString();
+            statsBar.classList.add("visible");
+          }
+
+          /* Meta badges */
+          metaLang.textContent = data.language;
+          const tb = metaType;
+          tb.textContent = data.is_generated ? "Auto-generated" : "Manual";
+          tb.className = "meta-badge " + (data.is_generated ? "auto" : "manual");
+          toolbarTitle.textContent = "Output \u2014 " + format.toUpperCase();
+
+          /* Show output */
+          if (format === "json") {
+            jsonOutput.innerHTML = highlightJSON(data.content);
+            jsonOutput.hidden = false;
+            outputArea.hidden = true;
+          } else {
+            outputArea.value = data.content;
+            outputArea.hidden = false;
+            jsonOutput.hidden = true;
+          }
+
+          /* Search bar */
+          searchBar.classList.add("visible");
+          searchInput.value = "";
+          searchCount.textContent = "";
+
+          resultsSection.hidden = false;
+          hideStatus();
+          resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+          /* History */
+          const videoId = data.video_id;
+          addHistory(videoId, data.language_code, format);
+
+          /* Update URL */
+          const u = new URL(window.location);
+          u.searchParams.set("v", videoId);
+          u.searchParams.set("format", format);
+          window.history.replaceState({}, "", u);
+
+        } catch (err) {
+          showStatus(err.message, "error");
+        } finally {
+          extractBtn.disabled = false;
+        }
+      }
+
+      /* ── Keyboard shortcuts ───────────────────────── */
+      document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); extract(); }
+        if ((e.ctrlKey || e.metaKey) && e.key === "c" && !window.getSelection().toString() && currentData) {
+          e.preventDefault();
+          copyToClipboard();
+        }
+      });
+
+      /* ── Copy / Download ──────────────────────────── */
+      function copyToClipboard() {
+        const text = (currentData && currentData.format === "json") ? currentTranscriptText : (outputArea.value || jsonOutput.textContent);
+        navigator.clipboard.writeText(text).then(() => showToast("Copied to clipboard"));
+      }
+      function downloadFile() {
+        if (!currentData) return;
+        const ext = currentData.format === "json" ? "json" : currentData.format;
+        const mime = currentData.format === "json" ? "application/json" : "text/plain";
+        const text = (currentData.format === "json") ? currentTranscriptText : (outputArea.value || jsonOutput.textContent);
+        const blob = new Blob([text], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "transcript_" + currentData.video_id + "." + ext;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("Download started");
+      }
+
+      /* ── Event listeners ──────────────────────────── */
+      urlInput.addEventListener("keydown", (e) => { if (e.key === "Enter") extract(); });
+      formatSelect.addEventListener("change", () => { if (currentData) extract(); });
+      extractBtn.addEventListener("click", extract);
+      $("#copyBtn").addEventListener("click", copyToClipboard);
+      $("#copyBtnSmall").addEventListener("click", copyToClipboard);
+      $("#downloadBtn").addEventListener("click", downloadFile);
+      $("#downloadBtnSmall").addEventListener("click", downloadFile);
+
+    })();
+    </script>
+  </body>
+</html>
