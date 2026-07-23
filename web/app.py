@@ -51,6 +51,8 @@ async def api_list_languages(url: str = Query(...)):
                 for info in infos
             ]
         )
+    except HTTPException:
+        raise
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
@@ -96,6 +98,8 @@ async def api_extract(req: ExtractRequest):
                 },
             }
         )
+    except HTTPException:
+        raise
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
@@ -144,6 +148,8 @@ async def api_batch(req: BatchRequest):
                 }
 
         return JSONResponse(content=output)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -160,6 +166,8 @@ async def api_stats(url: str = Query(...)):
                 "languages_available": stats.languages_available,
             }
         )
+    except HTTPException:
+        raise
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
