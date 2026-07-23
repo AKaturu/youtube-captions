@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api._errors import IpBlocked, RequestBlocked
 
 VIDEO_ID_PATTERN = re.compile(
     r"(?:youtube\.com/watch\?v=|youtu\.be/|youtube\.com/embed/)([a-zA-Z0-9_-]{11})"
@@ -66,10 +67,22 @@ class _CacheEntry:
 
 
 class CaptionExtractor:
-    def __init__(self, cache_ttl: int = 300) -> None:
+    def __init__(self, cache_ttl: int = 300, max_retries: int = 3) -> None:
         self._api = YouTubeTranscriptApi()
         self._cache: Dict[str, _CacheEntry] = {}
         self._cache_ttl = cache_ttl
+        self._max_retries = max_retries
+
+    def _retry(self, fn, *args, **kwargs):  # noqa: ANN002, ANN003
+        last_exc = None
+        for attempt in range(self._max_retries):
+            try:
+                return fn(*args, **kwargs)
+            except (RequestBlocked, IpBlocked) as e:
+                last_exc = e
+                if attempt < self._max_retries - 1:
+                    time.sleep(2 ** attempt)
+        raise last_exc  # type: ignore[misc]
 
     @staticmethod
     def extract_video_id(url_or_id: str) -> str:
@@ -103,7 +116,7 @@ class CaptionExtractor:
 
     def list_available(self, url_or_id: str) -> List[TranscriptInfo]:
         video_id = self.extract_video_id(url_or_id)
-        transcript_list = self._api.list(video_id)
+        transcript_list = self._retry(self._api.list, video_id)
         return [
             TranscriptInfo(
                 language=t.language,
@@ -135,10 +148,10 @@ class CaptionExtractor:
             if cached:
                 return cached
 
-        fetched = self._api.fetch(video_id, languages=languages)
+        fetched = self._retry(self._api.fetch, video_id, languages=languages)
 
         if translate_to:
-            transcript_list = self._api.list(video_id)
+            transcript_list = self._retry(self._api.list, video_id)
             found = None
             for t in transcript_list:
                 if t.language_code == fetched.language_code:

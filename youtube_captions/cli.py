@@ -2,9 +2,30 @@ from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 
 from youtube_captions.extractor import CaptionExtractor
 from youtube_captions.formatters import to_json, to_srt, to_text, to_vtt
+
+FORMAT_EXT = {
+    "text": ".txt",
+    "srt": ".srt",
+    "vtt": ".vtt",
+    "json": ".json",
+}
+
+
+def _output(content: str, args: argparse.Namespace, video_id: str) -> None:
+    if args.output:
+        path = Path(args.output)
+        if path.is_dir():
+            ext = FORMAT_EXT[args.format]
+            path = path / f"{video_id}{ext}"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content, encoding="utf-8")
+        print(f"Saved: {path}")
+    else:
+        print(content)
 
 
 def main() -> None:
@@ -22,6 +43,12 @@ def main() -> None:
         choices=["text", "srt", "vtt", "json"],
         default="text",
         help="Output format (default: text)",
+    )
+    parser.add_argument(
+        "-o", "--output",
+        default=None,
+        metavar="PATH",
+        help="Output file or directory (default: stdout)",
     )
     parser.add_argument(
         "-l", "--language",
@@ -96,10 +123,8 @@ def main() -> None:
                 translate_to=args.translate,
                 use_cache=not args.no_cache,
             )
-            output = formatter(transcript)
-            print(output)
-            if len(args.urls) > 1:
-                print()
+            content = formatter(transcript)
+            _output(content, args, transcript.video_id)
         except Exception as e:
             print(f"Error ({url}): {e}", file=sys.stderr)
             sys.exit(1)
