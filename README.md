@@ -1,5 +1,9 @@
 # Youtube Captions
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-FF0000.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![CI](https://github.com/AKaturu/youtube-captions/actions/workflows/ci.yml/badge.svg)](https://github.com/AKaturu/youtube-captions/actions/workflows/ci.yml)
+
 A Python library, CLI tool, and web app for extracting captions and subtitles from YouTube videos. No API key required.
 
 Supports manual and auto-generated captions in any available language, with optional translation, batch extraction, caching, and multiple output formats.
