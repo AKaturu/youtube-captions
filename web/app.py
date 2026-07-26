@@ -25,16 +25,52 @@ class BatchRequest(BaseModel):
     translate_to: str | None = None
 
 
+class ConfigRequest(BaseModel):
+    proxy_url: str | None = None
+    cookie_path: str | None = None
+
+
 app = FastAPI(title="YouTube Captions", version="0.2.0")
+
+_config: dict[str, str | None] = {"proxy_url": None, "cookie_path": None}
 extractor = CaptionExtractor()
 
 app.mount("/static", StaticFiles(directory="web/static"), name="static")
+
+
+def _rebuild_extractor() -> None:
+    global extractor
+    try:
+        extractor = CaptionExtractor(
+            cookie_path=_config["cookie_path"] or None,
+            proxy_url=_config["proxy_url"] or None,
+        )
+    except Exception:
+        extractor = CaptionExtractor()
 
 
 @app.get("/", response_class=HTMLResponse)
 async def index():
     with open("web/static/index.html", "r", encoding="utf-8") as f:
         return HTMLResponse(content=f.read())
+
+
+@app.get("/api/config")
+async def api_get_config():
+    return JSONResponse(
+        content={
+            "proxy_url": _config["proxy_url"],
+            "cookie_path": _config["cookie_path"],
+        }
+    )
+
+
+@app.post("/api/config")
+async def api_set_config(req: ConfigRequest):
+    _config["proxy_url"] = req.proxy_url
+    _config["cookie_path"] = req.cookie_path
+    _rebuild_extractor()
+    return JSONResponse(content={"ok": True})
 
 
 @app.get("/api/list-languages")

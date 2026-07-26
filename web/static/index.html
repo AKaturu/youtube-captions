@@ -30,6 +30,9 @@
               <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
               <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
             </button>
+            <button class="theme-toggle" id="settingsToggle" type="button" aria-label="Settings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
           </div>
         </nav>
       </header>
@@ -212,6 +215,32 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+    <!-- Settings Modal -->
+    <div class="settings-overlay" id="settingsOverlay" hidden>
+      <div class="settings-modal">
+        <div class="settings-header">
+          <h3>Settings</h3>
+          <button class="icon-button" id="settingsClose" type="button" aria-label="Close settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="settings-body">
+          <p class="settings-note">Use these to bypass YouTube IP blocks (e.g. from cloud VMs).</p>
+          <div class="settings-field">
+            <label for="proxyInput">HTTPS Proxy URL</label>
+            <input type="text" id="proxyInput" placeholder="https://proxy:8080" />
+            <span class="settings-hint">Requests are routed through this proxy.</span>
+          </div>
+          <div class="settings-field">
+            <label for="cookieInput">Cookie File Path</label>
+            <input type="text" id="cookieInput" placeholder="C:\Users\...\cookies.txt" />
+            <span class="settings-hint">Netscape-format cookie file (export from browser).</span>
+          </div>
+          <button class="primary-button" id="settingsSave" type="button">Save Settings</button>
+        </div>
+      </div>
+    </div>
+
     <script>
     (function() {
       "use strict";
@@ -320,6 +349,32 @@
       });
       $("#clearHistoryBtn").addEventListener("click", () => { saveHistory([]); renderHistory(); });
       renderHistory();
+
+      /* ── Settings ───────────────────────────────── */
+      const settingsOverlay = $("#settingsOverlay");
+      const settingsToggle = $("#settingsToggle");
+      const settingsClose = $("#settingsClose");
+      const settingsSave = $("#settingsSave");
+      const proxyInput = $("#proxyInput");
+      const cookieInput = $("#cookieInput");
+
+      async function loadConfig() {
+        try {
+          const resp = await fetch("/api/config");
+          const cfg = await resp.json();
+          proxyInput.value = cfg.proxy_url || "";
+          cookieInput.value = cfg.cookie_path || "";
+        } catch { }
+      }
+      settingsToggle.addEventListener("click", () => { loadConfig(); settingsOverlay.hidden = false; });
+      settingsClose.addEventListener("click", () => { settingsOverlay.hidden = true; });
+      settingsOverlay.addEventListener("click", (e) => { if (e.target === settingsOverlay) settingsOverlay.hidden = true; });
+      settingsSave.addEventListener("click", async () => {
+        const body = { proxy_url: proxyInput.value.trim() || null, cookie_path: cookieInput.value.trim() || null };
+        await fetch("/api/config", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+        showToast("Settings saved");
+        settingsOverlay.hidden = true;
+      });
 
       /* ── URL params (deep link) ───────────────────── */
       const params = new URLSearchParams(window.location.search);

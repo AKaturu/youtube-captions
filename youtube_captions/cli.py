@@ -76,9 +76,21 @@ def main() -> None:
         action="store_true",
         help="Disable caching",
     )
+    parser.add_argument(
+        "--cookie",
+        default=None,
+        metavar="FILE",
+        help="Path to Netscape-format cookie file (for YouTube auth/IP ban bypass)",
+    )
+    parser.add_argument(
+        "--proxy",
+        default=None,
+        metavar="URL",
+        help="HTTPS proxy URL (for IP ban bypass)",
+    )
 
     args = parser.parse_args()
-    extractor = CaptionExtractor()
+    extractor = CaptionExtractor(cookie_path=args.cookie, proxy_url=args.proxy)
 
     if args.list_languages:
         for url in args.urls:

@@ -267,3 +267,35 @@ class TestListLanguagesEndpoint:
         client = TestClient(web_app.app)
         resp = client.get("/api/list-languages")
         assert resp.status_code == 422
+
+
+class TestConfigEndpoint:
+    def test_get_config_defaults(self):
+        client = TestClient(web_app.app)
+        resp = client.get("/api/config")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["proxy_url"] is None
+        assert data["cookie_path"] is None
+
+    def test_set_config(self):
+        client = TestClient(web_app.app)
+        resp = client.post(
+            "/api/config",
+            json={"proxy_url": "https://proxy:8080", "cookie_path": None},
+        )
+        assert resp.status_code == 200
+        assert resp.json()["ok"] is True
+
+        resp = client.get("/api/config")
+        data = resp.json()
+        assert data["proxy_url"] == "https://proxy:8080"
+        assert data["cookie_path"] is None
+
+    def test_clear_config(self):
+        client = TestClient(web_app.app)
+        client.post("/api/config", json={"proxy_url": "https://proxy:8080"})
+        resp = client.post("/api/config", json={"proxy_url": None, "cookie_path": None})
+        assert resp.status_code == 200
+        data = client.get("/api/config").json()
+        assert data["proxy_url"] is None

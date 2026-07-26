@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import http.cookiejar
 import re
 import time
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
+import requests
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import IpBlocked, RequestBlocked
+from youtube_transcript_api.proxies import GenericProxyConfig
 
 VIDEO_ID_PATTERN = re.compile(
     r"(?:youtube\.com/watch\?v=|youtu\.be/|youtube\.com/embed/)([a-zA-Z0-9_-]{11})"
@@ -67,11 +70,33 @@ class _CacheEntry:
 
 
 class CaptionExtractor:
-    def __init__(self, cache_ttl: int = 300, max_retries: int = 3) -> None:
-        self._api = YouTubeTranscriptApi()
+    def __init__(
+        self,
+        cache_ttl: int = 300,
+        max_retries: int = 3,
+        cookie_path: Optional[str] = None,
+        proxy_url: Optional[str] = None,
+    ) -> None:
         self._cache: Dict[str, _CacheEntry] = {}
         self._cache_ttl = cache_ttl
         self._max_retries = max_retries
+
+        http_client: Optional[requests.Session] = None
+        proxy_config: Optional[GenericProxyConfig] = None
+
+        if cookie_path:
+            http_client = requests.Session()
+            cj = http.cookiejar.MozillaCookieJar(cookie_path)
+            cj.load(ignore_discard=True, ignore_expires=True)
+            http_client.cookies = cj  # type: ignore[assignment]
+
+        if proxy_url:
+            proxy_config = GenericProxyConfig(https_url=proxy_url)
+
+        self._api = YouTubeTranscriptApi(
+            proxy_config=proxy_config,
+            http_client=http_client,
+        )
 
     def _retry(self, fn, *args, **kwargs):  # noqa: ANN002, ANN003
         last_exc = None

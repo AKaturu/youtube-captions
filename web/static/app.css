@@ -1267,3 +1267,78 @@ kbd {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ── Settings Modal ───────────────────────────────────── */
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+.settings-modal {
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: 420px;
+  max-width: 92vw;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid var(--line);
+}
+.settings-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.settings-body {
+  padding: var(--space-xl);
+}
+.settings-note {
+  margin: 0 0 var(--space-lg);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.settings-field {
+  margin-bottom: var(--space-lg);
+}
+.settings-field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+}
+.settings-field input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: var(--font);
+  background: var(--surface);
+  color: var(--ink);
+  box-sizing: border-box;
+}
+.settings-field input:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+}
+.settings-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.settings-body .primary-button {
+  width: 100%;
+  margin-top: var(--space-sm);
+}
