@@ -86,7 +86,7 @@ def main() -> None:
         "--proxy",
         default=None,
         metavar="URL",
-        help="HTTPS proxy URL (for IP ban bypass)",
+        help="Proxy URL: http://, https://, socks4://, socks5://, socks5h://",
     )
 
     args = parser.parse_args()
