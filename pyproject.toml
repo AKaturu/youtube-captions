@@ -13,6 +13,7 @@ dependencies = [
     "youtube-transcript-api>=1.2.0",
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.32.0",
+    "PySocks>=1.7.0",
 ]
 
 [project.optional-dependencies]
