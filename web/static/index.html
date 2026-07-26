@@ -16,22 +16,21 @@
         <div class="settings-header">
           <h3>Settings</h3>
           <button class="icon-button" id="settingsClose" type="button" aria-label="Close settings">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
         </div>
         <div class="settings-body">
-          <p class="settings-note">Use these to bypass YouTube IP blocks (e.g. from cloud VMs).</p>
           <div class="settings-field">
-            <label for="proxyInput">Proxy URL</label>
+            <label for="proxyInput">Proxy</label>
             <input type="text" id="proxyInput" placeholder="socks5://IP:PORT" />
-            <span class="settings-hint">Supports: <code>http://</code>, <code>https://</code>, <code>socks4://</code>, <code>socks5://</code>, <code>socks5h://</code></span>
+            <span class="settings-hint">http, https, socks4, socks5, socks5h</span>
           </div>
           <div class="settings-field">
-            <label for="cookieInput">Cookie File Path</label>
+            <label for="cookieInput">Cookie file</label>
             <input type="text" id="cookieInput" placeholder="C:\Users\...\cookies.txt" />
-            <span class="settings-hint">Netscape-format cookie file (export from browser).</span>
+            <span class="settings-hint">Netscape format, export from browser</span>
           </div>
-          <button class="primary-button" id="settingsSave" type="button">Save Settings</button>
+          <button class="primary-button" id="settingsSave" type="button">Save</button>
         </div>
       </div>
     </div>
