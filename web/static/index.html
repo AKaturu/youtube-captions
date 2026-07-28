@@ -21,6 +21,36 @@
         </div>
         <div class="settings-body">
           <div class="settings-field">
+            <label>Appearance</label>
+            <div class="theme-grid" id="themeGrid">
+              <button class="theme-swatch active" data-theme="light" type="button">
+                <span class="swatch-dot" style="background:#fff;border:1px solid #ddd"></span>
+                Light
+              </button>
+              <button class="theme-swatch" data-theme="dark" type="button">
+                <span class="swatch-dot" style="background:#111"></span>
+                Dark
+              </button>
+              <button class="theme-swatch" data-theme="red" type="button">
+                <span class="swatch-dot" style="background:#FF0000"></span>
+                Red
+              </button>
+              <button class="theme-swatch" data-theme="blue" type="button">
+                <span class="swatch-dot" style="background:#337ab7"></span>
+                Blue
+              </button>
+              <button class="theme-swatch" data-theme="green" type="button">
+                <span class="swatch-dot" style="background:#2ecc71"></span>
+                Green
+              </button>
+              <button class="theme-swatch" data-theme="purple" type="button">
+                <span class="swatch-dot" style="background:#9b59b6"></span>
+                Purple
+              </button>
+            </div>
+          </div>
+          <hr class="settings-divider" />
+          <div class="settings-field">
             <label for="proxyInput">Proxy</label>
             <input type="text" id="proxyInput" placeholder="socks5://IP:PORT" />
             <span class="settings-hint">http, https, socks4, socks5, socks5h</span>
@@ -289,7 +319,12 @@
         else { sun.style.display = "block"; moon.style.display = "none"; }
       }
       setTheme(getTheme());
-      themeToggle.addEventListener("click", () => setTheme(getTheme() === "light" ? "dark" : "light"));
+      themeToggle.addEventListener("click", () => {
+        const cur = getTheme();
+        if (cur === "dark") setTheme("light");
+        else if (cur === "light") setTheme("dark");
+        else setTheme("dark");
+      });
 
       /* ── History ──────────────────────────────────── */
       function getHistory() { try { return JSON.parse(localStorage.getItem("yt-caps-history") || "[]"); } catch { return []; } }
@@ -356,6 +391,20 @@
       const settingsSave = $("#settingsSave");
       const proxyInput = $("#proxyInput");
       const cookieInput = $("#cookieInput");
+      const themeGrid = $("#themeGrid");
+      let pendingTheme = getTheme();
+
+      function updateSwatchActive() {
+        themeGrid.querySelectorAll(".theme-swatch").forEach(s => {
+          s.classList.toggle("active", s.dataset.theme === pendingTheme);
+        });
+      }
+      themeGrid.addEventListener("click", (e) => {
+        const swatch = e.target.closest(".theme-swatch");
+        if (!swatch) return;
+        pendingTheme = swatch.dataset.theme;
+        updateSwatchActive();
+      });
 
       async function loadConfig() {
         try {
@@ -364,6 +413,8 @@
           proxyInput.value = cfg.proxy_url || "";
           cookieInput.value = cfg.cookie_path || "";
         } catch { }
+        pendingTheme = getTheme();
+        updateSwatchActive();
       }
       settingsToggle.addEventListener("click", () => { loadConfig(); settingsOverlay.hidden = false; });
       settingsClose.addEventListener("click", () => { settingsOverlay.hidden = true; });
@@ -371,6 +422,7 @@
       settingsSave.addEventListener("click", async () => {
         const body = { proxy_url: proxyInput.value.trim() || null, cookie_path: cookieInput.value.trim() || null };
         await fetch("/api/config", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+        setTheme(pendingTheme);
         showToast("Settings saved");
         settingsOverlay.hidden = true;
       });

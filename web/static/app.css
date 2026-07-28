@@ -48,6 +48,39 @@
   --success: #4dba96;
 }
 
+[data-theme="red"] {
+  --brand: #FF0000;
+  --brand-dark: #CC0000;
+  --brand-deep: #8B0000;
+  --brand-pale: #FFF0F0;
+  --page: #fdf5f5;
+  --surface: #f7f2f2;
+}
+[data-theme="blue"] {
+  --brand: #337ab7;
+  --brand-dark: #286090;
+  --brand-deep: #1a3c5e;
+  --brand-pale: #f0f6fb;
+  --page: #f4f8fc;
+  --surface: #edf3f8;
+}
+[data-theme="green"] {
+  --brand: #2ecc71;
+  --brand-dark: #27ae60;
+  --brand-deep: #1a7a40;
+  --brand-pale: #edfaf3;
+  --page: #f4fdf8;
+  --surface: #eaf8f0;
+}
+[data-theme="purple"] {
+  --brand: #9b59b6;
+  --brand-dark: #8244a0;
+  --brand-deep: #5a2d75;
+  --brand-pale: #f5eefa;
+  --page: #faf5fd;
+  --surface: #f2eaf8;
+}
+
 /* ── Reset ───────────────────────────────────────────────── */
 
 *,
@@ -1348,4 +1381,42 @@ kbd {
   padding: 10px;
   border-radius: 8px;
   font-size: 0.85rem;
+}
+.settings-divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 4px 0 16px;
+}
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.theme-swatch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-family: var(--font);
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.theme-swatch:hover {
+  border-color: var(--muted);
+}
+.theme-swatch.active {
+  border-color: var(--brand);
+  background: var(--brand-pale);
+}
+.swatch-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
